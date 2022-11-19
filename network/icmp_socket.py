@@ -1,5 +1,5 @@
 import socket
-from icmp_echo_request import ICMPEchoRequest
+from network.icmp_echo_request import ICMPEchoRequest
 
 
 class ICMPSocket:
@@ -12,7 +12,8 @@ class ICMPSocket:
         self.socket.settimeout(wait_response_time)
 
     def send_to(self, icmp_echo_request: ICMPEchoRequest, host: str, port=80):
-        self.socket.sendto(icmp_echo_request, (host,  port))
+        self.socket.sendto(bytes(icmp_echo_request), (host,  port))
+        return self.socket.recvfrom(2 ** 12)
 
     def close(self):
         self.socket.close()

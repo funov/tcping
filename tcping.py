@@ -1,5 +1,7 @@
 import argparse
 
+from ping_process import run
+
 
 def create_parser():
     description = "Usage\ntcping [options] <destination>"
@@ -48,7 +50,13 @@ def main():
     cmd_commands = parser.parse_args()
 
     try:
-        pass
+        run(
+            cmd_commands.destination,
+            cmd_commands.port,
+            cmd_commands.count,
+            cmd_commands.interval,
+            cmd_commands.wait
+        )
     except RuntimeError:
         print('Something went wrong, write to the developers...')
 
