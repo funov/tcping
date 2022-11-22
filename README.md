@@ -8,7 +8,14 @@
 
 ## Состав
 
-TODO
+* Точка входа, передача ключей `tcping.py`
+* Связующий узел `ping_process.py`
+* Тесты `tests/tests.py`
+* Вывод информации на консоль `utils/printer.py`
+* Работа с замерами времени `utils/timer.py`
+* Формирование ICMP запроса `network/icmp_echo_request.py`
+* Класс ICMP ответа `network/icmp_echo_reply.py`
+* Конфигурация и работа с RAW socket `network/icmp_socket.py`
 
 ## Требования
 
@@ -46,8 +53,14 @@ replaced in the future.
 
 ## Тесты
 
-TODO
+Частично протестированы:
+
+* `utils/printer.py`
+* `network/icmp_echo_request.py`
+* `network/icmp_echo_reply.py`
 
 ## Запуск
 
-TODO
+Реализован подробный и понятный help
+
+`sudo python3 tcping.py -h`
