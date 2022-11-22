@@ -17,39 +17,35 @@ def run(host: str, port: int, count: int, interval: float, wait: float):
 
     while True:
         try:
-            time = ping(host, port, wait, interval, seq)
+            time = ping(host, port, wait, seq, interval)
             times.append(time)
 
-            if count == seq - 1:
+            if count == seq:
                 break
 
             seq += 1
         except KeyboardInterrupt:
             Printer.print_statistics(host, times)
-            break
+            return
 
     Printer.print_statistics(host, times)
 
 
-def ping(destination: str, port: int, wait: float, interval: float, seq: int):
-    stat = _ping_with_errors_handling(destination, port, wait, seq)
-
-    if interval is not None:
-        sleep(interval)
-
-    return stat
-
-
-def _ping_with_errors_handling(destination: str, port: int, wait: float, seq: int):
+def ping(host: str, port: int, wait: float, seq: int, interval: float):
     try:
-        reply, timer = _ping(destination, port, wait)
+        reply, timer = _ping(host, port, wait)
+
+        if interval is not None:
+            sleep(interval)
 
         if reply.type != 0:
             Printer.print_unexpected_type(reply.type)
         elif reply.code != 0:
             Printer.print_unexpected_code(reply.code)
         else:
-            Printer.print_success_ping(destination, port, seq, reply.ttl, timer.get_ms_str())
+            Printer.print_success_ping(
+                host, port, seq, reply.ttl, timer.get_ms_str()
+            )
 
         return timer.get_ms()
 
@@ -59,11 +55,11 @@ def _ping_with_errors_handling(destination: str, port: int, wait: float, seq: in
     return None
 
 
-def _ping(destination: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
+def _ping(host: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
     timer = Timer()
     timer.start()
     socket = ICMPSocket(wait)
-    reply = socket.send_to(ICMPEchoRequest(), destination, port)
+    reply = socket.send_to(ICMPEchoRequest(), host, port)
     icmp_reply = ICMPEchoReply(reply)
     timer.stop()
     socket.close()

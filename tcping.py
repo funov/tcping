@@ -16,7 +16,7 @@ def create_parser():
     parser.add_argument(
         '--port',
         '-p',
-        help='tcp port',
+        help='port',
         type=int,
         default=80
     )
