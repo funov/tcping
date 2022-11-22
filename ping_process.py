@@ -1,53 +1,65 @@
+import socket
+
 from network.icmp_echo_reply import ICMPEchoReply
 from network.icmp_socket import ICMPSocket
 from network.icmp_echo_request import ICMPEchoRequest
 from utils.timer import Timer
+from utils.printer import Printer
 
 from time import sleep
 
 
-def run(
-        destination: str,
-        port: int,
-        count: int,
-        interval: float,
-        wait: float
-):
-    print_start(destination)
+def run(host: str, port: int, count: int, interval: float, wait: float):
+    Printer.start(host)
 
-    if count is None:
-        seq = 1
-        times = []
-        while True:
-            try:
-                icmp_reply, timer = ping(destination, port, wait)
+    seq = 1
+    times = []
 
-                if len(icmp_reply.bytes_reply) != 0:
-                    times.append(timer.get_ms())
+    while True:
+        try:
+            time = ping(host, port, wait, interval, seq)
+            times.append(time)
 
-                    print_ping(
-                        destination,
-                        port,
-                        seq,
-                        icmp_reply.ttl,
-                        timer.get_ms_str()
-                    )
-                else:
-                    print('WRONG')
-
-                if interval is not None:
-                    sleep(interval)
-
-                seq += 1
-            except KeyboardInterrupt:
-                print_statistics(destination, times)
+            if count == seq - 1:
                 break
-    else:
-        for i in range(count):
-            print(i)
+
+            seq += 1
+        except KeyboardInterrupt:
+            Printer.print_statistics(host, times)
+            break
+
+    Printer.print_statistics(host, times)
 
 
-def ping(destination: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
+def ping(destination: str, port: int, wait: float, interval: float, seq: int):
+    stat = _ping_with_errors_handling(destination, port, wait, seq)
+
+    if interval is not None:
+        sleep(interval)
+
+    return stat
+
+
+def _ping_with_errors_handling(destination: str, port: int, wait: float, seq: int):
+    try:
+        reply, timer = _ping(destination, port, wait)
+
+        if reply.type != 0:
+            Printer.print_unexpected_type(reply.type)
+        elif reply.code != 0:
+            Printer.print_unexpected_code(reply.code)
+        else:
+            Printer.print_success_ping(destination, port, seq, reply.ttl, timer.get_ms_str())
+
+        return timer.get_ms()
+
+    except socket.timeout:
+        Printer.print_timelimit()
+
+    return None
+
+
+def _ping(destination: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
     timer = Timer()
     timer.start()
     socket = ICMPSocket(wait)
@@ -57,19 +69,3 @@ def ping(destination: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
     socket.close()
 
     return icmp_reply, timer
-
-
-def print_start(host: str):
-    print(f'PING {host} 48 bytes of data')
-
-
-def print_ping(host: str, port: int, seq: int, ttl: int, ms: str):
-    print(f'Connected to {host}[:{port}]: seq={seq} ttl={ttl} time={ms}')
-
-
-def print_statistics(host: str, times: list):
-    n = len(times)
-
-    print(f'\n--- {host} ping statistics---')
-    print(f'{n} packets transmitted, time {sum(times)} ms')
-    print(f'rtt min/avg/max = {min(times)}/{sum(times) / n}/{max(times)} ms')
