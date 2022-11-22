@@ -26,12 +26,23 @@ class Printer:
         n_received = sum([0 if time is None else 1 for time in times])
         n_loss = n - n_received
 
-        times = [0 if time is None else time for time in times]
+        new_times = []
+
+        for time in times:
+            if time is not None:
+                new_times.append(time)
+
+        if len(new_times) == 0:
+            print(f'\n--- {host} ping statistics---')
+            print(f'{n} packets transmitted, 0 received, '
+                  f'100% packet loss')
+            return
+
         loss = int(n_loss / n * 100)
-        total_time = round(sum(times), 1)
-        min_times = round(min(times), 1)
-        avg_times = round(sum(times) / n_received, 1)
-        max_times = round(max(times), 1)
+        total_time = round(sum(new_times), 1)
+        min_times = round(min(new_times), 1)
+        avg_times = round(sum(new_times) / n_received, 1)
+        max_times = round(max(new_times), 1)
 
         print(f'\n--- {host} ping statistics---')
         print(f'{n} packets transmitted, {n_received} received, '
