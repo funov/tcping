@@ -53,13 +53,15 @@ replaced in the future.
 
 ## Тесты
 
-Полностью протестированы:
+Полностью покрыты тестами:
 
 * `utils/printer.py`
 * `utils/timer.py`
 * `network/icmp_echo_request.py`
 * `network/icmp_echo_reply.py`
 * `network/icmp_socket.py`
+
+`network/icmp_socket.py` и `utils/printer.py` протестированы с помощью `mock.patch`
 
 ## Запуск
 
