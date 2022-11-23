@@ -1,10 +1,9 @@
 import io
-import unittest.mock
+import unittest
 from socket import AddressFamily, SocketKind
-from time import sleep
 from unittest import mock
+from time import sleep
 
-import network
 from network.icmp_echo_reply import ICMPEchoReply
 from network.icmp_echo_request import ICMPEchoRequest
 from network.icmp_socket import ICMPSocket
@@ -160,7 +159,7 @@ class ICMPSocketTests(unittest.TestCase):
         with mock.patch('socket.socket') as mock_socket:
             mock_socket.return_value.recvfrom.return_value \
                 = self.expected_reply
-            icmp_socket = network.icmp_socket.ICMPSocket()
+            icmp_socket = ICMPSocket()
             reply = icmp_socket.send_to(ICMPEchoRequest(), '127.0.0.1', 80)
             icmp_socket.close()
 
@@ -194,7 +193,7 @@ class ICMPSocketTests(unittest.TestCase):
         with mock.patch('socket.socket') as mock_socket:
             mock_socket.return_value.recvfrom.return_value \
                 = self.expected_reply
-            icmp_socket = network.icmp_socket.ICMPSocket(10)
+            icmp_socket = ICMPSocket(10)
             icmp_socket.send_to(ICMPEchoRequest(), '127.0.0.1', 80)
             icmp_socket.close()
 

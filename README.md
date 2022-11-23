@@ -53,11 +53,13 @@ replaced in the future.
 
 ## Тесты
 
-Частично протестированы:
+Полностью протестированы:
 
 * `utils/printer.py`
+* `utils/timer.py`
 * `network/icmp_echo_request.py`
 * `network/icmp_echo_reply.py`
+* `network/icmp_socket.py`
 
 ## Запуск
 
@@ -68,5 +70,19 @@ replaced in the future.
 Вот он:
 
 ```
-TODO
+usage: tcping.py [-h] [--port PORT] [--count COUNT] [--interval INTERVAL] [--wait WAIT] destination
+
+Usage tcping [options] <destination>
+
+positional arguments:
+  destination           dns name or ip address
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --port PORT, -p PORT  port
+  --count COUNT, -c COUNT
+                        stop after <count> replies
+  --interval INTERVAL, -i INTERVAL
+                        seconds between sending each packet
+  --wait WAIT, -w WAIT  seconds time to wait for response
 ```
