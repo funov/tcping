@@ -14,10 +14,14 @@ class ICMPEchoRequest:
                      b"\x30\x31\x32\x33\x34\x35\x36\x37"
     __ICMP_ECHO_REQUEST = 8
 
-    def __init__(self, data=__DEFAULT_DATA):
+    def __init__(self, data=__DEFAULT_DATA, custom_id=None):
         self.data = data
         self.encoded_data = str(binascii.hexlify(data))
-        self.id = os.getpid()
+
+        if custom_id is None:
+            self.id = os.getpid()
+        else:
+            self.id = custom_id
 
     def __bytes__(self):
         header_without_checksum = struct.pack(
