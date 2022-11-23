@@ -1,6 +1,6 @@
 # TCPing
 
-Автор: Сычев Иван Валерьевич ФТ-104-2
+Автор: `@s_vanyaa`
 
 ## Описание
 
@@ -64,3 +64,9 @@ replaced in the future.
 Реализован подробный и понятный help
 
 `sudo python3 tcping.py -h`
+
+Вот он:
+
+```
+TODO
+```
