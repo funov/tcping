@@ -20,6 +20,10 @@ class Printer:
         print(f"Reply didn't have time to come")
 
     @staticmethod
+    def print_incorrect_host():
+        print(f"Host is incorrect")
+
+    @staticmethod
     def print_statistics(host: str, times: list):
         n = len(times)
 

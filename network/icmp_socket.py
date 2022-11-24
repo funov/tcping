@@ -3,9 +3,9 @@ from network.icmp_echo_request import ICMPEchoRequest
 
 
 class ICMPSocket:
-    def __init__(self, wait_response_time=None):
+    def __init__(self, family=socket.AF_INET, wait_response_time=None):
         self.socket = socket.socket(
-            socket.AF_INET,
+            family,
             socket.SOCK_RAW,
             socket.IPPROTO_ICMP
         )

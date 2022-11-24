@@ -1,12 +1,11 @@
 import socket
+from time import sleep
 
 from network.icmp_echo_reply import ICMPEchoReply
 from network.icmp_socket import ICMPSocket
 from network.icmp_echo_request import ICMPEchoRequest
 from utils.timer import Timer
 from utils.printer import Printer
-
-from time import sleep
 
 
 def run(host: str, port: int, count: int, interval: float, wait: float):
@@ -51,6 +50,8 @@ def ping(host: str, port: int, wait: float, seq: int, interval: float):
 
     except socket.timeout:
         Printer.print_timelimit()
+    except socket.gaierror:
+        Printer.print_incorrect_host()
 
     return None
 
@@ -58,10 +59,15 @@ def ping(host: str, port: int, wait: float, seq: int, interval: float):
 def _ping(host: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
     timer = Timer()
     timer.start()
-    socket = ICMPSocket(wait)
-    reply = socket.send_to(ICMPEchoRequest(), host, port)
+
+    if host.count(':') == 7:
+        sock = ICMPSocket(family=socket.AF_INET6, wait_response_time=wait)
+    else:
+        sock = ICMPSocket(wait)
+
+    reply = sock.send_to(ICMPEchoRequest(), host, port)
     icmp_reply = ICMPEchoReply(reply)
     timer.stop()
-    socket.close()
+    sock.close()
 
     return icmp_reply, timer
