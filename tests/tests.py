@@ -1,5 +1,4 @@
 import io
-import socket
 import unittest
 from socket import AddressFamily, SocketKind
 from unittest import mock
@@ -149,16 +148,11 @@ class ICMPSocketTests(unittest.TestCase):
             SocketKind.SOCK_RAW,
             1
         )
+
         self.expected_port = 80
         self.expected_host = '127.0.0.1'
         self.expected_recv_size = (4096,)
         self.expected_reply = b'123'
-
-        self.expected_socket_inf_ipv6 = (
-            AddressFamily.AF_INET6,
-            SocketKind.SOCK_RAW,
-            1
-        )
 
         self.expected_timeout = (10,)
 
@@ -196,31 +190,11 @@ class ICMPSocketTests(unittest.TestCase):
 
         self.assertEqual(self.expected_reply, reply)
 
-    def test_icmp_socket_ipv6(self):
-        with mock.patch('socket.socket') as mock_socket:
-            mock_socket.return_value.recvfrom.return_value \
-                = self.expected_reply
-            icmp_socket = ICMPSocket(family=socket.AF_INET6)
-            reply = icmp_socket.send_to(
-                ICMPEchoRequest(),
-                '2a00:1450:4010:c07::be',
-                80
-            )
-            icmp_socket.close()
-
-        self.assertEqual('', mock_socket.mock_calls[0][0])
-        self.assertEqual(
-            self.expected_socket_inf_ipv6,
-            mock_socket.mock_calls[0][1]
-        )
-
-        self.assertEqual(self.expected_reply, reply)
-
     def test_icmp_socket_with_timeout(self):
         with mock.patch('socket.socket') as mock_socket:
             mock_socket.return_value.recvfrom.return_value \
                 = self.expected_reply
-            icmp_socket = ICMPSocket(wait_response_time=10)
+            icmp_socket = ICMPSocket(10)
             icmp_socket.send_to(ICMPEchoRequest(), '127.0.0.1', 80)
             icmp_socket.close()
 

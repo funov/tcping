@@ -50,8 +50,9 @@ def ping(host: str, port: int, wait: float, seq: int, interval: float):
 
     except socket.timeout:
         Printer.print_timelimit()
-    except socket.gaierror:
+    except (socket.gaierror, ValueError):
         Printer.print_incorrect_host()
+        raise KeyboardInterrupt
 
     return None
 
@@ -59,12 +60,7 @@ def ping(host: str, port: int, wait: float, seq: int, interval: float):
 def _ping(host: str, port: int, wait: float) -> (ICMPEchoReply, Timer):
     timer = Timer()
     timer.start()
-
-    if host.count(':') == 7:
-        sock = ICMPSocket(family=socket.AF_INET6, wait_response_time=wait)
-    else:
-        sock = ICMPSocket(wait)
-
+    sock = ICMPSocket(wait)
     reply = sock.send_to(ICMPEchoRequest(), host, port)
     icmp_reply = ICMPEchoReply(reply)
     timer.stop()
