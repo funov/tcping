@@ -15,6 +15,7 @@ class ICMPSocket:
     def send_to(self, icmp_echo_request: ICMPEchoRequest, host: str, port=80):
         if ':' in host and type(ip_address(host)) is IPv6Address:
             host = socket.getnameinfo((host, 0), 0)[0]
+            host = socket.gethostbyname(host)
 
         self.socket.sendto(bytes(icmp_echo_request), (host,  port))
         return self.socket.recvfrom(2 ** 12)
